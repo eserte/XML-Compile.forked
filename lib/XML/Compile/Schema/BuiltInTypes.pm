@@ -88,6 +88,16 @@ $builtin_types{boolean} =
  , extends => 'anyAtomicType'
  };
 
+while(my($key, $val) = each %{$builtin_types{boolean}})
+{
+    $builtin_types{boolean_with_Types_Serialiser}->{$key} =
+	$key eq 'parse'
+	? sub { no warnings 'once';
+		$_[0] =~ m/^\s*(false|0)\s*/i
+		? $Types::Serialiser::false
+		: $Types::Serialiser::true }
+	: $val;
+}
 
 $builtin_types{pattern} =
  { example => '*.exe'
@@ -97,7 +107,7 @@ $builtin_types{pattern} =
 sub bigint
 {   my $v = shift;
     $v =~ s/\s+//g;
-    return $v if $v =~ $fits_iv;
+    return $v+0 if $v =~ $fits_iv;
 
     my $big = Math::BigInt->new($v);
     error __x"Value `{val}' is not a (big) integer", val => $big
@@ -302,6 +312,11 @@ $builtin_types{sloppy_float} =
  , extends => 'anyAtomicType'
  };
 
+while(my($key, $val) = each %{$builtin_types{sloppy_float}})
+{
+    $builtin_types{sloppy_float_force_NV}->{$key} =
+        $key eq 'parse' ? sub { $_[0] + 0.0 } : $val;
+}
 
 $builtin_types{base64Binary} =
  { parse   => sub { eval { decode_base64 $_[0] } }

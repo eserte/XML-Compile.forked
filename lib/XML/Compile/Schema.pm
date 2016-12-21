@@ -215,6 +215,11 @@ sub compile($$@)
         panic "require Math::BigFloat by sloppy_floats:\n$@" if $@;
     }
 
+    if($args{json_friendly} ||= 0)
+    {   eval "require Types::Serialiser";
+	panic "require Types::Serialiser by json_friendly:\n$@" if $@;
+    }
+
     $args{prefixes} = $self->_namespaceTable
       (($args{prefixes} || $args{output_namespaces})
       , $args{namespace_reset}

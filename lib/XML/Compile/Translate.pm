@@ -204,7 +204,8 @@ sub topLevel($$;$)
     # built-in types have to be handled differently.
     my $internal = XML::Compile::Schema::Specs->builtInType(undef, $fullname
        , sloppy_integers => $self->{sloppy_integers}
-       , sloppy_floats   => $self->{sloppy_floats});
+       , sloppy_floats   => $self->{sloppy_floats}
+       , json_friendly   => $self->{json_friendly});
 
     if($internal)
     {   my $builtin = $self->makeBuiltin($fullname, undef
@@ -266,7 +267,8 @@ sub typeByName($$$)
 
     my $def   = XML::Compile::Schema::Specs->builtInType($node, $typename
        , sloppy_integers => $self->{sloppy_integers}
-       , sloppy_floats   => $self->{sloppy_floats});
+       , sloppy_floats   => $self->{sloppy_floats}
+       , json_friendly   => $self->{json_friendly});
 
     if($def)
     {   # Is built-in

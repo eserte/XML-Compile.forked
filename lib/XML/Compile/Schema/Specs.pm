@@ -162,11 +162,18 @@ sub builtInType($$;$@)
 
     my %args = @_;
 
+    return $builtin_types{'boolean_with_Types_Serialiser'}
+	if $args{json_friendly} && $name eq 'boolean';
+
     return $builtin_types{$sloppy_int_version{$name}}
         if $args{sloppy_integers} && exists $sloppy_int_version{$name};
 
-    return $builtin_types{$sloppy_float_version{$name}}
-        if $args{sloppy_floats} && exists $sloppy_float_version{$name};
+    if($args{sloppy_floats} && exists $sloppy_float_version{$name})
+    {
+	my $typedef = $builtin_types{$sloppy_float_version{$name}};
+	return $builtin_types{'sloppy_float_force_NV'} if $args{json_friendly} && $typedef == $builtin_types{'sloppy_float'};
+	return $typedef;
+    }
 
     # only official names are exported this way
     my $public = $schema->{builtin_public}{$name};
