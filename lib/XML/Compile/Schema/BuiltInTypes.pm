@@ -88,16 +88,15 @@ $builtin_types{boolean} =
  , extends => 'anyAtomicType'
  };
 
-while(my($key, $val) = each %{$builtin_types{boolean}})
-{
-    $builtin_types{boolean_with_Types_Serialiser}->{$key} =
-	$key eq 'parse'
-	? sub { no warnings 'once';
-		$_[0] =~ m/^\s*(false|0)\s*/i
-		? $Types::Serialiser::false
-		: $Types::Serialiser::true }
-	: $val;
-}
+$builtin_types{boolean_with_Types_Serialiser} =
+ { %{$builtin_types{boolean}}
+ , parse => sub {
+       no warnings 'once';
+       $_[0] =~ m/^\s*(false|0)\s*/i
+       ? $Types::Serialiser::false
+       : $Types::Serialiser::true;
+    }
+ };
 
 $builtin_types{pattern} =
  { example => '*.exe'
